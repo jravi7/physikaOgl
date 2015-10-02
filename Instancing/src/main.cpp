@@ -1,7 +1,7 @@
 /*Physika X GLUT Template
 Author: Jay Ravi 
-Date: Sept 25th 2015
-Project: Genesis - A Simple Cube
+Date: Oct 1st 2015
+Project: Instancing - It's over 9000!!!
 */
 
 //C++ headers 
@@ -22,24 +22,39 @@ Project: Genesis - A Simple Cube
 #include "ACamera.h"
 #include "Camera.h"
 #include "Shader.h"
+#include "Box.h"
 
 
 //Scalars
-int g_width = 1024;
-int g_height = 768;
 float g_dt = 0.1; //global simulation timestep
+int g_width = 1920;
+int g_height = 1080;
+const int g_instances = 200;
 
+
+//Objects
+Box* g_box;
 ACamera* g_cam;
 Camera* g_cam2; 
 Shader* g_shader;
-
-GLuint vbo;
-GLuint vao;
 
 
 //Keyboard variables
 bool keyStates[256];
 
+glm::mat4 g_model[g_instances];
+glm::vec3 g_colors[g_instances];
+
+glm::vec3 randVec(float min, float max)
+{
+	glm::vec3 v; 
+	if(min < 0)
+		min *= -1;
+	v.x = (((std::rand() / float(RAND_MAX) * max*2) - min));
+	v.y = (((std::rand() / float(RAND_MAX) * max*2) - min));
+	v.z = (((std::rand() / float(RAND_MAX) * max*2) - min));
+	return v;
+}
 
 void initCamera(){
 	g_cam = new ACamera();
@@ -51,71 +66,8 @@ void initCamera(){
 	g_cam->SetVelocity(5);
 
 	g_cam2 = new Camera(60, 1.f, 1000.f, g_width, g_height);
-	g_cam2->init(glm::vec3(0, 5, 5), glm::vec3(0, 0, 0), 
-				 glm::vec3(0, 1, 0), 5.f);
-}
-
-void initBox()
-{
-	//setup vertices
-	  GLfloat vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-    };
-	//initialize buffers
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
-	//load data into buffers
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
-	glBindVertexArray(vao);
-	//describe vertex data layout
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GL_FLOAT), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GL_FLOAT), (GLvoid*)0);
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
+	g_cam2->init(glm::vec3(0, 0, 15), glm::vec3(0, 0, 0), 
+				 glm::vec3(0, 1, 0), 20.f);
 }
 
 void initShaders()
@@ -125,12 +77,35 @@ void initShaders()
 
 void initOpengl()
 {
+	srand(time(NULL));
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
-	glPolygonMode(GL_BACK, GL_LINE);
 	initCamera();
 	initShaders();
-	initBox();
+	glFrontFace(GL_CCW);
+	glPolygonMode(GL_BACK, GL_LINE);
+	g_box = new Box(5, g_instances);
+	for(int i = 0 ; i < g_instances ; i++)
+	{
+		g_model[i] = glm::translate(glm::mat4(1), randVec(-50, 50));
+		
+		switch(i%4)
+		{
+			case 0: //red 
+				g_colors[i] = glm::vec3(0.9,0.2,0.3);
+				break;
+			case 1: //green
+				g_colors[i] = glm::vec3(0.0,0.9,0.5);
+				break;
+			case 2: //blue
+				g_colors[i] = glm::vec3(0.2,0.5,0.9);
+				break;
+			case 3: //yellow
+				g_colors[i] = glm::vec3(1,1,0.3);
+				break;
+		}
+		
+	}
 }
 
 
@@ -139,11 +114,18 @@ void display()
 	//clear screen
 	glClearColor(.15f, .15f, .15f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glm::mat4 m_model = glm::translate(glm::mat4(1), glm::vec3(0, 0, -1));
 	g_shader->use();
-	g_shader->setUniform("mvp", g_cam2->matrix()*m_model);
-	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, 12*3);
+	for(int i = 0 ; i < g_instances ; i++)
+	{
+		std::string mvp = "mvp["+std::to_string(i)+"]";
+		std::string cubeColor = "cubeColor["+std::to_string(i)+"]";
+		g_shader->setUniform(mvp.c_str(), g_cam2->matrix()*g_model[i]);
+		g_shader->setUniform(cubeColor.c_str(), g_colors[i]);
+	}
+	
+	
+	g_box->render(g_cam2);
+
 	g_shader->disuse();
 	glutPostRedisplay();
 	glutSwapBuffers();
@@ -265,7 +247,7 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ACCUM |GL_MULTISAMPLE| GLUT_STENCIL);
 	glutInitWindowSize(g_width,g_height);
 	glutInitWindowPosition(100, 30);
-	glutCreateWindow("Physika X - Genesis");
+	glutCreateWindow("Physika X - It's over 9000!!!");
 	createGlutCallBacks();
 	GLenum res = glewInit();
 	if(res == GLEW_OK)
