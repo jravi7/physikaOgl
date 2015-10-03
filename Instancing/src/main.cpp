@@ -23,12 +23,13 @@ Project: Instancing - It's over 9000!!!
 #include "Camera.h"
 #include "Shader.h"
 #include "Box.h"
+#include "ImageIO.h"
 
 
 //Scalars
 float g_dt = 0.1; //global simulation timestep
-int g_width = 1920;
-int g_height = 1080;
+int g_width = 1024;
+int g_height = 768;
 const int g_instances = 200;
 
 
@@ -217,6 +218,11 @@ void processKeyboard()
 	if(keyStates['d'] || keyStates['D'])
 	{
 		g_cam2->move(Camera::RIGHT, g_dt); 
+	}
+
+	if(keyStates['p'] || keyStates['P'])
+	{
+		ImageIO::captureScreen(g_width, g_height);
 	}
 	
 }
