@@ -59,7 +59,7 @@ void initSettings()
 
 void initObjects()
 {
-	g_box = new Box(5);
+	g_box = new Box(5, glm::vec3(0), glm::vec3(0));
 	g_plane = new DPlane(glm::vec3(-128, 0, 128), 5, 5);
 }
 

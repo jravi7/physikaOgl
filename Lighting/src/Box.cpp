@@ -5,23 +5,28 @@
 #include "Box.h"
 
 
-Box::Box(int side, int no_of_instances)
+Box::Box(int side, glm::vec3 position, glm::vec3 color)
 {
 	m_side = side; 
-	m_instances = no_of_instances;
+	m_position = position; 
+	m_color = color;
+	m_vbo = new VertexBufferObject();
 	createCube();
 	fillBuffers();
 }
 
 Box::~Box(void){}
 
-unsigned int Box::addVertexData(glm::vec3 v, glm::vec3 n)
+unsigned int Box::addVertexData(glm::vec3 p, glm::vec3 n)
 {
-	m_verts.push_back(v);
-	m_normals.push_back(n);
-	assert(m_verts.size()==m_normals.size());
-	assert(m_verts.size()!=0);
-	return m_verts.size()-1;
+	Vertex v; 
+	v.p = p;
+	v.t = glm::vec2((p.x+m_side*0.5f)/m_side, (p.y+m_side*0.5f)/m_side);
+	v.n = n;
+	v.c = glm::vec3(0.0f,0.9f,0.5f);
+
+	m_vertex_data.push_back(v);
+	return m_vertex_data.size()-1;
 }
 
 void Box::addFace(unsigned int v1, unsigned int v2, unsigned int v3)
@@ -81,36 +86,12 @@ void Box::createCube()
 
 void Box::fillBuffers()
 {
-	glGenBuffers(1, &m_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, m_verts.size()*sizeof(glm::vec3), &m_verts[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, &m_nbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_nbo);
-	glBufferData(GL_ARRAY_BUFFER, m_normals.size()*sizeof(glm::vec3), &m_normals[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-	glGenBuffers(1, &m_ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*m_indices.size(), &m_indices[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	m_vbo->setVertexData(m_vertex_data);
+	m_vbo->setIndices(m_indices);
+	m_vbo->createBuffers();
 }
 
 void Box::render()
 {
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_nbo);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-
-	glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (GLvoid*)0, m_instances);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	m_vbo->render(GL_TRIANGLES);
 }

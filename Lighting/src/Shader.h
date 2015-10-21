@@ -1,8 +1,5 @@
 #pragma once
-#define VERTEX_POSITION		0
-#define VERTEX_NORMAL		1
-#define VERTEX_TEXTURE		2
-#define VERTEX_COLOR		3
+
 
 #include <gl/glew.h>
 #include <vector>
@@ -10,6 +7,8 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Vertex.h"
 
 class Shader
 {

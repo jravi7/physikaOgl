@@ -11,6 +11,7 @@
 //Physika
 #include "ACamera.h"
 #include "Shader.h"
+#include "VertexBufferObject.h"
 
 /* Discretized Plane
 	A square plane defined by
@@ -29,15 +30,14 @@ public:
 
 private:
 
+	std::vector<Vertex> m_data;
 	std::vector<unsigned int> m_indices;
 
-	glm::vec3 m_pos; 
-	glm::mat4 m_model;
+	glm::vec3 m_pos;
+	glm::vec3 m_color; 
 
 	int m_cs;
-	int m_side; 
+	int m_side;
 
-	GLuint m_vbo; 
-	GLuint m_nbo; 
-	GLuint m_ibo;
+	VertexBufferObject* m_vbo;
 };

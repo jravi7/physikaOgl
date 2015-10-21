@@ -13,11 +13,13 @@
 
 //Physika
 #include "Camera.h"
+#include "Vertex.h"
+#include "VertexBufferObject.h"
 
 class Box
 {
 public:
-	Box(int side, int no_of_instances=1);
+	Box(int side, glm::vec3 position, glm::vec3 color);
 	~Box(void);
 	void render();
 
@@ -28,18 +30,21 @@ private:
 	void addFace(unsigned int, unsigned int, unsigned int);
 	unsigned int addVertexData(glm::vec3 v, glm::vec3 n); 
 
+private: 
+
 	//cube side length
 	int m_side;
-	int m_instances;
 
-	std::vector<glm::vec3> m_verts;
-	std::vector<glm::vec3> m_normals; 
-	std::vector<unsigned int> m_indices; 
+	glm::vec3 m_position;
+	glm::vec3 m_color;
+	std::vector<Vertex> m_vertex_data; 
+	std::vector<unsigned int> m_indices;
 
-	//buffer;
-	GLuint m_vbo;
-	GLuint m_nbo;
-	GLuint m_ibo;
+
+	VertexBufferObject* m_vbo; 
+	Shader* m_shader; 
+
+	
 
 };
 

@@ -146,6 +146,7 @@
     <ClCompile Include="src\DPlane.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\VertexBufferObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ACamera.h" />
@@ -153,6 +154,8 @@
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\DPlane.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Vertex.h" />
+    <ClInclude Include="src\VertexBufferObject.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fs.glsl" />

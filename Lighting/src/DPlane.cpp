@@ -8,7 +8,9 @@ DPlane::DPlane(glm::vec3 pos,
 	m_pos = pos;
 	m_cs = cs;
 	m_side = side;
+	m_vbo = new VertexBufferObject();
 	init();
+
 }
 
 DPlane::~DPlane(void){}
@@ -25,7 +27,7 @@ void DPlane::init()
 		for(int i = 0; i < m_side; i++)
 		{
 			glm::vec3 v = glm::vec3(i*m_cs, 0, -j*m_cs);
-			glm::vec3 c = glm::vec3 (1,  1, 1);
+			glm::vec3 c = m_color;
 			glm::vec2 t = 4.f * glm::vec2(v.x/m_side, v.z/m_side);
 			colors.push_back(c);
 			verts.push_back(v);
@@ -90,37 +92,26 @@ void DPlane::init()
 		normals[i] = glm::normalize(normals[i]);
 	}
 
-	glGenBuffers(1, &m_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, verts.size()*sizeof(glm::vec3), &verts[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	assert(verts.size()==normals.size());
+	assert(verts.size()==tcoords.size());
+	assert(verts.size()==colors.size());
 
-	glGenBuffers(1, &m_nbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_nbo);
-	glBufferData(GL_ARRAY_BUFFER, normals.size()*sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-	glGenBuffers(1, &m_ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*m_indices.size(), &m_indices[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	for(int i = 0; i < verts.size(); i++)
+	{
+		Vertex v; 
+		v.p = verts[i];
+		v.t = tcoords[i];
+		v.n = normals[i];
+		v.c = colors[i];
+		m_data.push_back(v);
+	}
+	
+	m_vbo->setVertexData(m_data);
+	m_vbo->setIndices(m_indices);
+	m_vbo->createBuffers();
 }
-
 
 void DPlane::render(Shader* shader)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_nbo);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-
-	glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (GLvoid*)0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	m_vbo->render(GL_TRIANGLES);
 }
