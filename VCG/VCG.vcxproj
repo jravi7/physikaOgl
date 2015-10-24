@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{370CDC23-4D7C-47F8-8E0F-28E55EC5A621}</ProjectGuid>
+    <ProjectGuid>{5BBA93C8-3638-48A0-BE3C-4DB6FF9D865D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Lighting</RootNamespace>
+    <RootNamespace>VCG</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -69,9 +69,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\Developer\Personal Projects\Physika - Playground\PhysikaExperiments\3rdParty\vcglib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\Developer\Personal Projects\Physika - Playground\PhysikaExperiments\3rdParty\vcglib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -140,31 +142,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ACamera.cpp" />
-    <ClCompile Include="src\Box.cpp" />
-    <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\DPlane.cpp" />
-    <ClCompile Include="src\Light.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="src\VertexBufferObject.cpp" />
+    <ClCompile Include="..\3rdParty\vcglib\wrap\ply\plylib.cpp" />
+    <None Include="main.cpp" />
+    <ClCompile Include="main2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ACamera.h" />
-    <ClInclude Include="src\Box.h" />
-    <ClInclude Include="src\Camera.h" />
-    <ClInclude Include="src\DPlane.h" />
-    <ClInclude Include="src\Light.h" />
-    <ClInclude Include="src\Shader.h" />
-    <ClInclude Include="src\Vertex.h" />
-    <ClInclude Include="src\VertexBufferObject.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\fs.glsl" />
-    <None Include="shaders\LightFS.glsl" />
-    <None Include="shaders\LightVS.glsl" />
-    <None Include="shaders\pointFS.glsl" />
-    <None Include="shaders\vs.glsl" />
+    <ClInclude Include="..\3rdParty\vcglib\wrap\ply\plylib.h" />
+    <ClInclude Include="sampling.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -29,3 +29,11 @@ struct Vertex
 		c	 = color;
 	}
 };
+
+struct Material
+{
+	glm::vec3 ka; 
+	glm::vec3 kd; 
+	glm::vec3 ks;
+	float shininess;
+};

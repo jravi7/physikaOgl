@@ -12,16 +12,24 @@
 #include <glm\glm.hpp>
 
 //Physika
+#include "Light.h"
 #include "Camera.h"
 #include "Vertex.h"
+#include "Shader.h"
 #include "VertexBufferObject.h"
+
+class Light;
 
 class Box
 {
 public:
 	Box(int side, glm::vec3 position, glm::vec3 color);
 	~Box(void);
-	void render();
+	void render(Camera* cam);
+	void render(Camera* cam, std::vector<Light>& lights);
+	void setShader(Shader* shader);
+	void setPosition(glm::vec3);
+	void setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess);
 
 private: 
 	//private methods
@@ -34,17 +42,15 @@ private:
 
 	//cube side length
 	int m_side;
-
-	glm::vec3 m_position;
 	glm::vec3 m_color;
+	glm::vec3 m_position;
 	std::vector<Vertex> m_vertex_data; 
 	std::vector<unsigned int> m_indices;
 
 
-	VertexBufferObject* m_vbo; 
 	Shader* m_shader; 
-
+	Material m_material;
+	VertexBufferObject* m_vbo; 
 	
-
 };
 

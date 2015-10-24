@@ -116,6 +116,11 @@ void Camera::offsetOrientation(float theta, float phi)
 	normalizeAngles();
 }
 
+glm::vec3 Camera::position()
+{
+	return m_pos;
+}
+
 void Camera::offsetPosition(const glm::vec3& offset)
 {
 	m_pos += offset;

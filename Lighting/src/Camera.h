@@ -47,7 +47,7 @@ public:
 	glm::mat4 projection();
 	glm::mat4 orientation();
 
-
+	glm::vec3 position();
 	glm::vec3 up();
 	glm::vec3 front(); 
 	glm::vec3 right();

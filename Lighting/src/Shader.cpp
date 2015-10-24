@@ -42,6 +42,15 @@ GLint Shader::getUniformLocation(const GLchar *varname)
 	return glGetUniformLocation(m_Program, varname);
 }
 
+void Shader::setUniform(const GLchar* name, float v)
+{
+	GLint loc = getUniformLocation(name);
+	if(loc != -1){
+		glUniform1f(loc, v);
+	}
+}
+
+
 void Shader::setUniform(const GLchar* name, glm::vec3 v)
 {
 	GLint loc = getUniformLocation(name);

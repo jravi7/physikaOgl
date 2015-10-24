@@ -19,11 +19,11 @@ Project: Genesis - A Simple Cube
 #include <glm/gtx/transform.hpp>
 
 //Physika
+#include "Box.h"
 #include "Camera.h"
 #include "Shader.h"
 #include "DPlane.h"
-#include "Box.h"
-
+#include "Light.h"
 
 //Scalars
 int g_width = 1024;
@@ -34,20 +34,33 @@ Camera* g_cam2;
 Shader* g_shader;
 DPlane* g_plane;
 Box*	g_box; 
+std::vector<Light> g_lights; 
 
 //Keyboard variables
 bool keyStates[256];
 
+const unsigned int NO_OF_LIGHTS = 10;
+
+glm::vec3 randVec(float min, float max)
+{
+	glm::vec3 v; 
+	if(min < 0)
+		min *= -1;
+	v.x = (((std::rand() / float(RAND_MAX) * max*2) - min));
+	v.y = (((std::rand() / float(RAND_MAX) * max*2) - 0));
+	v.z = (((std::rand() / float(RAND_MAX) * max*2) - min));
+	return v;
+}
 
 void initCamera(){
 	g_cam2 = new Camera(60, 1.f, 1000.f, g_width, g_height);
-	g_cam2->init(glm::vec3(0, 0, 15), glm::vec3(0, 0, 0), 
-		glm::vec3(0, 1, 0), 30.f);
+	g_cam2->init(glm::vec3(0, 15, 15), glm::vec3(0, 0, 0), 
+		glm::vec3(0, 1, 0), 50.f);
 }
 
 void initShaders()
 {
-	g_shader = new Shader("shaders/vs.glsl", "shaders/fs.glsl");
+	g_shader = new Shader("shaders/vs.glsl", "shaders/pointFS.glsl");
 }
 
 void initSettings()
@@ -59,16 +72,35 @@ void initSettings()
 
 void initObjects()
 {
-	g_box = new Box(5, glm::vec3(0), glm::vec3(0));
-	g_plane = new DPlane(glm::vec3(-128, 0, 128), 5, 5);
+	g_box = new Box(3, glm::vec3(0, 5, 0), glm::vec3(0.2));
+	g_box->setShader(g_shader);
+	g_box->setMaterial(glm::vec3(0.2), glm::vec3(1), glm::vec3(1.f), 60.f);
+	g_plane = new DPlane(glm::vec3(-128*2*0.5, 0, 128*2*0.5), glm::vec3(0.3,0.8,0.4), 128, 2);
+	g_plane->setShader(g_shader);
+	g_plane->setMaterial(glm::vec3(0.3), glm::vec3(1), glm::vec3(0.1), 60.f);
 }
+
+void initLights()	
+{
+
+	for(unsigned int i = 0; i < NO_OF_LIGHTS; i++)
+	{
+		Light l(randVec(-50.f, 50.f));
+		l.setProperty(glm::vec3(0.2f), randVec(0.1,1), glm::vec3(0.4f));
+		g_lights.push_back(l);
+	}
+
+}
+
 
 void initScene()
 {
+	srand(time(NULL));
 	initSettings();
 	initCamera();
 	initShaders();
 	initObjects();
+	initLights();
 }
 
 
@@ -77,12 +109,15 @@ void display()
 	//clear screen
 	glClearColor(.15f, .15f, .15f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	g_shader->use();
-	g_shader->setUniform("mvp", g_cam2->matrix());
-	g_shader->setUniform("ModelView", g_cam2->view());
-	g_box->render();
-	g_plane->render(g_shader);
-	g_shader->disuse();
+	
+	g_box->render(g_cam2, g_lights);
+	g_plane->render(g_cam2, g_lights);
+	for (Light l : g_lights)
+	{
+		l.render(g_cam2);
+	}
+	
+	
 	glutPostRedisplay();
 	glutSwapBuffers();
 }

@@ -17,6 +17,7 @@ public:
 	~Shader(void);
 	void use();   //use shader program
 	void disuse();	//disable shader program
+	void setUniform(const GLchar* name, float v);
 	void setUniform(const GLchar* name, glm::mat3 m);
 	void setUniform(const GLchar* name, glm::mat4 m);
 	void setUniform(const GLchar* name, glm::vec3);
