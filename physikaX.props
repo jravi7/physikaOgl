@@ -3,12 +3,12 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>$(SolutionDir)\3rdParty\freeglut\include;$(SolutionDir)\3rdParty\glm\include;$(SolutionDir)\3rdParty\glew\include;$(SolutionDir)\3rdParty\soil\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\3rdParty\freeglut\lib\x64;$(SolutionDir)\3rdParty\glew\lib\Release\x64;$(SolutionDir)\3rdParty\soil\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\3rdParty\freeglut\include;$(SolutionDir)\3rdParty\glm\include;$(SolutionDir)\3rdParty\glew\include;$(SolutionDir)\3rdParty\assimp\include;$(SolutionDir)\3rdParty\soil\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\3rdParty\freeglut\lib\x64;$(SolutionDir)\3rdParty\glew\lib\Release\x64;$(SolutionDir)\3rdParty\soil\lib\x64;$(SolutionDir)\3rdParty\assimp\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>freeglut.lib;glew32.lib;SOILd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;glew32.lib;SOILd.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

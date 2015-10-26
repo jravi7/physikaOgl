@@ -3,19 +3,27 @@
 //In variables
 in vec3 VertexPosition; 
 in vec3 VertexNormal;
+in vec2 VertexTexture; 
+in vec3 VertexColor; 
 
 //Out Variables
 out vec3 fVertexPosition;
-out vec3 fVertexColor;
+out vec3 fVertexNormal;
+out vec2 fVertexTexture; 
+out vec3 fVertexColor; 
 
 //Matrices
-uniform mat4 mvp[200];
+uniform mat4 mvp;
 
-//Colors
-uniform vec3 cubeColor[200];
+
+
 void main()
 {
-	fVertexPosition = VertexPosition;
-	fVertexColor = cubeColor[gl_InstanceID];
-	gl_Position =	mvp[gl_InstanceID] * vec4(VertexPosition, 1.0f);
+	fVertexPosition = VertexPosition; 
+	fVertexNormal   = VertexNormal;
+	fVertexColor    = VertexColor;
+    fVertexTexture  = VertexTexture;
+
+
+	gl_Position =	mvp * vec4(VertexPosition, 1.0f);
 }

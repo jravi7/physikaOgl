@@ -1,8 +1,5 @@
 #pragma once
-#define VERTEX_POSITION		0
-#define VERTEX_NORMAL		1
-#define VERTEX_TEXTURE		2
-#define VERTEX_COLOR		3
+
 
 #include <gl/glew.h>
 #include <vector>
@@ -11,6 +8,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Vertex.h"
+
 class Shader
 {
 public:
@@ -18,6 +17,7 @@ public:
 	~Shader(void);
 	void use();   //use shader program
 	void disuse();	//disable shader program
+	void setUniform(const GLchar* name, float v);
 	void setUniform(const GLchar* name, glm::mat3 m);
 	void setUniform(const GLchar* name, glm::mat4 m);
 	void setUniform(const GLchar* name, glm::vec3);
@@ -35,6 +35,6 @@ private:
 	GLuint m_Program;
 	GLuint m_vs;
 	GLuint m_fs;
-	
+
 };
 

@@ -5,23 +5,51 @@
 #include "Box.h"
 
 
-Box::Box(int side, int no_of_instances)
+Box::Box(int side, glm::vec3 position, glm::vec3 color)
 {
 	m_side = side; 
-	m_instances = no_of_instances;
+	m_position = position; 
+	m_color = color;
+	m_vbo = new VertexBufferObject();
+	m_shader = nullptr;
 	createCube();
 	fillBuffers();
 }
 
 Box::~Box(void){}
 
-unsigned int Box::addVertexData(glm::vec3 v, glm::vec3 n)
+void Box::setShader(Shader* shader)
 {
-	m_verts.push_back(v);
-	m_normals.push_back(n);
-	assert(m_verts.size()==m_normals.size());
-	assert(m_verts.size()!=0);
-	return m_verts.size()-1;
+	m_shader = shader;
+}
+void Box::setPosition(glm::vec3 pos)
+{
+	m_position = pos;
+}
+
+void Box::setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess)
+{
+	m_material.ka = a;
+	m_material.kd = d;
+	m_material.ks = s;
+	m_material.shininess = shininess;
+}
+
+void Box::setTexture(Texture* texture)
+{
+	m_texture = texture;
+}
+
+unsigned int Box::addVertexData(glm::vec3 p, glm::vec3 n, glm::vec2 t)
+{
+	Vertex v; 
+	v.p = p;
+	v.t = t;
+	v.n = n;
+	v.c = m_color;
+
+	m_vertex_data.push_back(v);
+	return m_vertex_data.size()-1;
 }
 
 void Box::addFace(unsigned int v1, unsigned int v2, unsigned int v3)
@@ -41,15 +69,20 @@ void Box::createCube()
 	glm::vec3 v6(-m_side*0.5f,  m_side*0.5f, -m_side*0.5f); 
 	glm::vec3 v7(-m_side*0.5f, -m_side*0.5f, -m_side*0.5f); 
 	glm::vec3 v8( m_side*0.5f, -m_side*0.5f, -m_side*0.5f);
-	
-	unsigned int i1 = addVertexData(v1, glm::normalize(v1/3.f));
-	unsigned int i2 = addVertexData(v2, glm::normalize(v2/3.f));
-	unsigned int i3 = addVertexData(v3, glm::normalize(v3/3.f));
-	unsigned int i4 = addVertexData(v4, glm::normalize(v4/3.f));
-	unsigned int i5 = addVertexData(v5, glm::normalize(v5/3.f));
-	unsigned int i6 = addVertexData(v6, glm::normalize(v6/3.f));
-	unsigned int i7 = addVertexData(v7, glm::normalize(v7/3.f));
-	unsigned int i8 = addVertexData(v8, glm::normalize(v8/3.f));
+
+	glm::vec2 t1(0, 0);
+	glm::vec2 t2(1, 0);
+	glm::vec2 t3(1, 1);
+	glm::vec2 t4(0, 1);
+
+	unsigned int i1 = addVertexData(v1, glm::normalize(v1/3.f),t1);
+	unsigned int i2 = addVertexData(v2, glm::normalize(v2/3.f),t2);
+	unsigned int i3 = addVertexData(v3, glm::normalize(v3/3.f),t3);
+	unsigned int i4 = addVertexData(v4, glm::normalize(v4/3.f),t4);
+	unsigned int i5 = addVertexData(v5, glm::normalize(v5/3.f),t1);
+	unsigned int i6 = addVertexData(v6, glm::normalize(v6/3.f),t2);
+	unsigned int i7 = addVertexData(v7, glm::normalize(v7/3.f),t3);
+	unsigned int i8 = addVertexData(v8, glm::normalize(v8/3.f),t4);
 
 	//front
 	addFace(i1, i2, i3);
@@ -61,7 +94,7 @@ void Box::createCube()
 	addFace(i5, i2, i1);
 
 	//right
-	
+
 	addFace(i5, i1, i4);
 	addFace(i5, i4, i8);
 
@@ -81,37 +114,71 @@ void Box::createCube()
 
 void Box::fillBuffers()
 {
-	glGenBuffers(1, &m_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, m_verts.size()*sizeof(glm::vec3), &m_verts[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	m_vbo->setVertexData(m_vertex_data);
+	m_vbo->setIndices(m_indices);
+	m_vbo->createBuffers();
+}
 
-	glGenBuffers(1, &m_nbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_nbo);
-	glBufferData(GL_ARRAY_BUFFER, m_normals.size()*sizeof(glm::vec3), &m_normals[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+void Box::render(Camera* cam, std::vector<Light>& lights)
+{
+	if(m_shader!=nullptr)
+	{
+		glm::mat4 model = glm::translate(glm::mat4(1), m_position);
+		m_shader->use();
 
+		//MVP
+		glm::mat4 m = cam->matrix() * model;
+		//ModelViewMatrix
+		glm::mat4 ModelViewMatrix = cam->view()*model;
+		//NormalMatrix
+		glm::mat3 NormalMatrix = glm::transpose(glm::inverse(glm::mat3(ModelViewMatrix)));
 
-	glGenBuffers(1, &m_ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*m_indices.size(), &m_indices[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		m_shader->setUniform("mvp", m);
+		m_shader->setUniform("ViewMatrix", cam->view());
+		m_shader->setUniform("NormalMatrix", NormalMatrix);
+		m_shader->setUniform("ModelViewMatrix", ModelViewMatrix);
+		m_shader->setUniform("EyePositionInWorld", cam->position());
+
+		//Material
+		m_shader->setUniform("g_material.ka", m_material.ka);
+		m_shader->setUniform("g_material.kd", m_material.kd);
+		m_shader->setUniform("g_material.ks", m_material.ks);
+		m_shader->setUniform("g_material.shininess", m_material.shininess);
+
+		m_texture->activate(GL_TEXTURE0);
+		m_shader->setSampler("TextureSample2D", 0);
+
+		for(unsigned int i = 0 ; i < lights.size(); i++)
+		{
+			std::string uniform_name = "g_light["+std::to_string(i)+"].";
+			Light::Property p = lights[i].properties();
+			m_shader->setUniform(std::string(uniform_name+"position").c_str(), glm::vec4(lights[i].position(),1.f));
+			m_shader->setUniform(std::string(uniform_name+"la").c_str(), p.la);
+			m_shader->setUniform(std::string(uniform_name+"ld").c_str(), p.ld);
+			m_shader->setUniform(std::string(uniform_name+"ls").c_str(), p.ls);
+		}
+		
+		//render mesh
+		m_vbo->render(GL_TRIANGLES);
+		m_texture->deactivate();
+		m_shader->disuse();
+	}
 }
 
 void Box::render(Camera* cam)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-	glEnableVertexAttribArray(0);
+	if(m_shader!=nullptr)
+	{
+		glm::mat4 model = glm::translate(glm::mat4(1), m_position);
+		m_shader->use();
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_nbo);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
-	glEnableVertexAttribArray(1);
-	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-
-	//glDrawArrays(GL_TRIANGLES, 0, m_verts.size());
-	glDrawElementsInstanced(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (GLvoid*)0, m_instances);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		//MVP
+		glm::mat4 m = cam->matrix() * model;
+		
+		m_shader->setUniform("mvp", m);
+		
+		//render mesh
+		m_vbo->render(GL_TRIANGLES);
+		m_shader->disuse();
+	}
 }

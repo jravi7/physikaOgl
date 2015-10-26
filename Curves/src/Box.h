@@ -12,34 +12,48 @@
 #include <glm\glm.hpp>
 
 //Physika
+#include "Light.h"
 #include "Camera.h"
+#include "Vertex.h"
+#include "Shader.h"
+#include "Texture.h"
+#include "VertexBufferObject.h"
+
+class Light;
 
 class Box
 {
 public:
-	Box(int side, int no_of_instances=1);
+	Box(int side, glm::vec3 position, glm::vec3 color);
 	~Box(void);
 	void render(Camera* cam);
+	void render(Camera* cam, std::vector<Light>& lights);
+	void setShader(Shader* shader);
+	void setPosition(glm::vec3);
+	void setTexture(Texture* texture);
+	void setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess);
 
 private: 
 	//private methods
 	void createCube();
 	void fillBuffers();
 	void addFace(unsigned int, unsigned int, unsigned int);
-	unsigned int addVertexData(glm::vec3 v, glm::vec3 n); 
+	unsigned int addVertexData(glm::vec3 v, glm::vec3 n, glm::vec2 t); 
+
+private: 
 
 	//cube side length
 	int m_side;
-	int m_instances;
+	glm::vec3 m_color;
+	glm::vec3 m_position;
+	std::vector<Vertex> m_vertex_data; 
+	std::vector<unsigned int> m_indices;
 
-	std::vector<glm::vec3> m_verts;
-	std::vector<glm::vec3> m_normals; 
-	std::vector<unsigned int> m_indices; 
 
-	//buffer;
-	GLuint m_vbo;
-	GLuint m_nbo;
-	GLuint m_ibo;
-
+	Shader* m_shader; 
+	Material m_material;
+	Texture* m_texture;
+	VertexBufferObject* m_vbo; 
+	
 };
 

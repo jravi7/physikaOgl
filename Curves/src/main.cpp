@@ -19,82 +19,128 @@ Project: Genesis - A Simple Cube
 #include <glm/gtx/transform.hpp>
 
 //Physika
+#include "Box.h"
 #include "Camera.h"
 #include "Shader.h"
-#include "Box.h"
-
+#include "DPlane.h"
+#include "Light.h"
+#include "PObject.h"
 
 //Scalars
 int g_width = 1024;
 int g_height = 768;
 float g_dt = 0.1; //global simulation timestep
 
+//camera
 Camera* g_cam2; 
+
+//Shaders
 Shader* g_shader;
-Box* g_box;
-std::vector<glm::vec3> g_curve;
-std::vector<glm::vec3> g_colors;
+Shader* g_point_shader;
+
+//Textures
+Texture* g_wood_texture;
+Texture* g_wood_specular;
+
+//Primitives
+DPlane* g_plane;
+Box*	g_box; 
+
+//Mesh Object
+PObject* g_mesh;
+
+std::vector<Light> g_lights; 
 
 
 //Keyboard variables
 bool keyStates[256];
 
+const unsigned int NO_OF_LIGHTS = 1;
 
-void initCamera(){
-
-	g_cam2 = new Camera(60, 1.f, 1000.f, g_width, g_height);
-	g_cam2->init(glm::vec3(0, 5, 5), glm::vec3(0, 0, 0), 
-				 glm::vec3(0, 1, 0), 50.f);
+glm::vec3 randVec(float min, float max)
+{
+	glm::vec3 v; 
+	if(min < 0)
+		min *= -1;
+	v.x = (((std::rand() / float(RAND_MAX) * max*2) - min));
+	v.y = (((std::rand() / float(RAND_MAX) * max*2) - 0));
+	v.z = (((std::rand() / float(RAND_MAX) * max*2) - min));
+	return v;
 }
 
+void initCamera(){
+	g_cam2 = new Camera(60, 1.f, 1000.f, g_width, g_height);
+	g_cam2->init(glm::vec3(0, 15, 15), glm::vec3(0, 0, 0), 
+		glm::vec3(0, 1, 0), 50.f);
+}
 
 void initShaders()
 {
-	g_shader = new Shader("shaders/vs.glsl", "shaders/fs.glsl");
+	g_shader = new Shader("shaders/vs.glsl", "shaders/PhongFS.glsl");
+	g_point_shader = new Shader("shaders/vs.glsl", "shaders/pointFS.glsl");
+	
 }
 
-void initCurve()
-{
-	for(float i = 0.f ; i < 100 ; ++i)
-	{
-		float y = 10.f*sinf(i*2);
-		glm::vec3 p = glm::vec3(i, y, 0);
-		g_curve.push_back(p);
-	}
-
-	g_box = new Box(2, g_curve.size());
-}
-
-void initOpengl()
+void initSettings()
 {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glPolygonMode(GL_BACK, GL_LINE);
+}
+
+void initObjects()
+{
+	g_box = new Box(3, glm::vec3(0, 5, 0), glm::vec3(0.2));
+	g_box->setShader(g_shader);
+	g_box->setMaterial(glm::vec3(0.7), glm::vec3(1), glm::vec3(1.f), 60.f);
+	g_box->setTexture(g_wood_texture);
+	g_plane = new DPlane(glm::vec3(-128*2*0.5, 0, 128*2*0.5), glm::vec3(0.3,0.8,0.4), 128, 2);
+	g_plane->setShader(g_shader);
+	g_plane->setMaterial(glm::vec3(0.7f), glm::vec3(1), glm::vec3(.4), 60.f);
+	g_plane->setTexture(g_wood_specular);
+
+	//mesh
+	g_mesh = new PObject(glm::vec3(0, 10, 0), "../resources/Meshes/trunk.ply");
+	g_mesh->setShader(g_point_shader);
+	g_mesh->setMaterial(glm::vec3(0.7), glm::vec3(1), glm::vec3(1.f), 60.f);
+}
+
+void initLights()	
+{
+	for(unsigned int i = 0; i < NO_OF_LIGHTS; i++)
+	{
+		Light l(randVec(45, 50));
+		l.setProperty(glm::vec3(0.5f), glm::vec3(1.f), glm::vec3(0.5f));
+		g_lights.push_back(l);
+	}
+}
+
+void initTextures()
+{
+	g_wood_texture = new Texture(GL_TEXTURE_2D);
+	g_wood_texture->setWrap(GL_REPEAT);
+	g_wood_texture->setMinFilter(GL_LINEAR);
+	g_wood_texture->setMagFilter(GL_LINEAR);
+	g_wood_texture->setImagePath("../resources/Textures/container2.png");
+	g_wood_specular = new Texture(GL_TEXTURE_2D);
+	g_wood_specular->setWrap(GL_REPEAT);
+	g_wood_specular->setMinFilter(GL_LINEAR);
+	g_wood_specular->setMagFilter(GL_LINEAR);
+	g_wood_specular->setImagePath("../resources/Textures/floor.jpg");
+	g_wood_texture->init();
+	g_wood_specular->init();
+}
+
+
+void initScene()
+{
+	srand(time(NULL));
+	initSettings();
 	initCamera();
 	initShaders();
-	initCurve();
-
-	for(int i = 0 ; i < g_curve.size(); i++)
-	{	
-		glm::vec3 color;
-		switch(i%4)
-		{
-			case 0: //red 
-				color = glm::vec3(0.9,0.2,0.3);
-				break;
-			case 1: //green
-				color = glm::vec3(0.0,0.9,0.5);
-				break;
-			case 2: //blue
-				color = glm::vec3(0.2,0.5,0.9);
-				break;
-			case 3: //yellow
-				color = glm::vec3(1,1,0.3);
-				break;
-		}
-		g_colors.push_back(color);
-		
-	}
+	initTextures();
+	initObjects();
+	initLights();
 }
 
 
@@ -104,18 +150,16 @@ void display()
 	glClearColor(.15f, .15f, .15f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	g_shader->use();
+	//g_box->render(g_cam2, g_lights);
+	g_plane->render(g_cam2, g_lights);
 
-	for(int i = 0; i < g_curve.size(); i++)
+	g_mesh->render(g_cam2, g_lights);
+	for (Light l : g_lights)
 	{
-		std::string mvp = "mvp["+std::to_string(i)+"]";
-		std::string cubeColor = "cubeColor["+std::to_string(i)+"]";
-		glm::mat4 g_model = glm::translate(glm::mat4(1), g_curve[i]);
-		g_shader->setUniform(mvp.c_str(), g_cam2->matrix()*g_model);
-		g_shader->setUniform(cubeColor.c_str(), g_colors[i]);
+		l.render(g_cam2);
 	}
-	g_box->render(g_cam2);
-	g_shader->disuse();
+	
+	
 	glutPostRedisplay();
 	glutSwapBuffers();
 }
@@ -131,9 +175,9 @@ void keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	  case 27:
-		  glutLeaveMainLoop();
-		  return;
+	case 27:
+		glutLeaveMainLoop();
+		return;
 	}
 	keyStates[key] = true;
 }
@@ -145,6 +189,7 @@ void keyboardUp(unsigned char key, int x, int y)
 
 void mwheel(int wheel, int direction, int x, int y)
 {
+
 }
 
 void mouse(int button, int state, int x, int y)
@@ -164,17 +209,17 @@ void mouse(int button, int state, int x, int y)
 
 	if(state == GLUT_DOWN && button == GLUT_RIGHT_BUTTON)
 	{
-		
+
 	}
 	if(state == GLUT_UP && button == GLUT_RIGHT_BUTTON)
 	{
-		
+
 	}
 }
 
 void passiveMotion(int x, int y)
 {		
-			
+
 }
 
 void motion(int x, int y)
@@ -203,7 +248,7 @@ void processKeyboard()
 	{
 		g_cam2->move(Camera::RIGHT, g_dt); 
 	}
-	
+
 }
 
 void idle()
@@ -223,23 +268,23 @@ void createGlutCallBacks()
 	glutPassiveMotionFunc(passiveMotion);
 	glutMotionFunc(motion);
 	glutIdleFunc(idle);
-	
-	
+
+
 }
 int main(int argc, char** argv)
 {
 	glutInit(&argc, argv); 
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ACCUM |GL_MULTISAMPLE| GLUT_STENCIL);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GL_MULTISAMPLE);
 	glutInitWindowSize(g_width,g_height);
 	glutInitWindowPosition(100, 30);
-	glutCreateWindow("Physika X - Genesis");
+	glutCreateWindow("Physika X - Curves");
 	createGlutCallBacks();
 	GLenum res = glewInit();
 	if(res == GLEW_OK)
 	{
-		initOpengl();
+		initScene();
 	}
-	
+
 	glutMainLoop();
 	return 0;
 }
