@@ -42,6 +42,12 @@
     <ClCompile Include="src\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImageIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ACamera.h">
@@ -68,6 +74,12 @@
     <ClInclude Include="src\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ImageIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fs.glsl">
@@ -83,6 +95,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\pointFS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\PhongFS.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

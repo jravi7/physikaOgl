@@ -30,7 +30,7 @@ uniform mat3 NormalMatrix;
 
 uniform vec3 EyePositionInWorld;
 
-uniform Light	 g_light[LIGHT_COUNT]; 
+uniform Light g_light[LIGHT_COUNT]; 
 uniform Material g_material;
 
 uniform sampler2D TextureSample2D;
@@ -38,27 +38,29 @@ uniform sampler2D TextureSample2D;
 //Out Variables
 out vec4 outputColor;
 
-vec4 phongDA(Light light, vec3 surface_normal)
+vec4 phongDA(Light light, vec3 surface_normal, vec3 surface_color)
 {
 	vec4 VertexEyeCoords = ModelViewMatrix * vec4(fVertexPosition, 1.0); 
 	vec4 lightEye = ViewMatrix * light.position;
 	vec3 lightVector = normalize(vec3(lightEye - VertexEyeCoords));
-	
 	float sdotn = max(dot(lightVector, surface_normal), 0.0);
 
 	vec3 diffuse = light.ld * g_material.kd * sdotn; 
-	vec3 ambient = light.la * g_material.ka;
 
+	vec3 ambient= light.la * g_material.ka;
+		
 	outputColor = vec4(diffuse, 1.f);
 
 	return outputColor;
 }
 
-vec4 phongS(Light light, vec3 surface_normal)
+vec4 phongS(Light light, vec3 surface_normal, vec3 surface_color)
 {
 	vec4 VertexEyeCoords = ModelViewMatrix * vec4(fVertexPosition, 1.0); 
 	vec4 lightEye = ViewMatrix * light.position;
 	vec3 lightVector = normalize(vec3(lightEye - VertexEyeCoords));
+
+	float sdotn = max(dot(lightVector, surface_normal), 0.0);
 
 	//Reflect vector
 	vec3 r = reflect(-lightVector, surface_normal);
@@ -66,12 +68,10 @@ vec4 phongS(Light light, vec3 surface_normal)
 
 	vec3 specular = vec3(0);
 
-	float sdotn = max(dot(lightVector, surface_normal), 0.0);
-
 	if(sdotn > 0.0)
 		specular = light.ls*g_material.ks*pow(max(dot(r,v),0.0),g_material.shininess);
 	
-	outputColor = vec4(specular,1);
+	outputColor = vec4(specular, 1.f);
 
 	return outputColor;
 }
@@ -82,14 +82,15 @@ void main()
 		
 	//Surface normal vector
 	vec3 tnorm = normalize(vec3(NormalMatrix * fVertexNormal));
+	vec4 texColor = texture(TextureSample2D, fVertexTexture);
 	vec4 resultDA = vec4(g_light[0].la*g_material.ka,1);
 	vec4 resultS = vec4(0);
-
-	vec4 TexColor = texture(TextureSample2D, fVertexTexture);
 	for(int i = 0; i < LIGHT_COUNT; i++)
 	{
-		resultDA += phongDA(g_light[i], tnorm);
-		resultS  += phongS(g_light[i], tnorm);
+		resultDA += phongDA(g_light[i], tnorm, fVertexColor);
+		resultS += phongS(g_light[i], tnorm, fVertexColor);
 	}
-	outputColor = (resultDA*TexColor) + resultS;
+
+	outputColor = resultDA*texColor + resultS;
+	
 }

@@ -22,6 +22,8 @@ void main()
 	fVertexPosition = VertexPosition; 
 	fVertexNormal   = VertexNormal;
 	fVertexColor    = VertexColor;
+    fVertexTexture  = VertexTexture;
+
 
 	gl_Position =	mvp * vec4(VertexPosition, 1.0f);
 }

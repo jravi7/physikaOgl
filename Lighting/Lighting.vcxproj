@@ -144,9 +144,11 @@
     <ClCompile Include="src\Box.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\DPlane.cpp" />
+    <ClCompile Include="src\ImageIO.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\VertexBufferObject.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -154,8 +156,10 @@
     <ClInclude Include="src\Box.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\DPlane.h" />
+    <ClInclude Include="src\ImageIO.h" />
     <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Vertex.h" />
     <ClInclude Include="src\VertexBufferObject.h" />
   </ItemGroup>
@@ -163,6 +167,7 @@
     <None Include="shaders\fs.glsl" />
     <None Include="shaders\LightFS.glsl" />
     <None Include="shaders\LightVS.glsl" />
+    <None Include="shaders\PhongFS.glsl" />
     <None Include="shaders\pointFS.glsl" />
     <None Include="shaders\vs.glsl" />
   </ItemGroup>

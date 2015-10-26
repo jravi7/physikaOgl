@@ -32,6 +32,11 @@ void DPlane::setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess)
 	m_material.shininess = shininess;
 }
 
+void DPlane::setTexture(Texture* texture)
+{
+	m_texture = texture;
+}
+
 void DPlane::init()
 {
 	std::vector<glm::vec3> verts; 
@@ -153,6 +158,9 @@ void DPlane::render(Camera* cam, std::vector<Light>& lights)
 		m_shader->setUniform("g_material.ks", m_material.ks);
 		m_shader->setUniform("g_material.shininess", m_material.shininess);
 		
+		m_texture->activate(GL_TEXTURE0);
+		m_shader->setSampler("TextureSample2D", 0);
+
 		for(unsigned int i = 0 ; i < lights.size(); i++)
 		{
 			std::string uniform_name = "g_light["+std::to_string(i)+"].";
@@ -163,6 +171,7 @@ void DPlane::render(Camera* cam, std::vector<Light>& lights)
 			m_shader->setUniform(std::string(uniform_name+"ls").c_str(), p.ls);
 		}
 		m_vbo->render(GL_TRIANGLES);
+		m_texture->deactivate();
 		m_shader->disuse();
 	}
 }

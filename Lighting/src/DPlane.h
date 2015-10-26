@@ -31,6 +31,8 @@ public:
 	void setShader(Shader* shader);
 	void setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess);
 
+	void setTexture(Texture* texture);
+
 private:
 
 	int m_cs;
@@ -42,5 +44,6 @@ private:
 
 	Shader* m_shader;
 	Material m_material;
+	Texture* m_texture;
 	VertexBufferObject* m_vbo;
 };

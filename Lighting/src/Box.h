@@ -16,6 +16,7 @@
 #include "Camera.h"
 #include "Vertex.h"
 #include "Shader.h"
+#include "Texture.h"
 #include "VertexBufferObject.h"
 
 class Light;
@@ -29,6 +30,7 @@ public:
 	void render(Camera* cam, std::vector<Light>& lights);
 	void setShader(Shader* shader);
 	void setPosition(glm::vec3);
+	void setTexture(Texture* texture);
 	void setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess);
 
 private: 
@@ -36,7 +38,7 @@ private:
 	void createCube();
 	void fillBuffers();
 	void addFace(unsigned int, unsigned int, unsigned int);
-	unsigned int addVertexData(glm::vec3 v, glm::vec3 n); 
+	unsigned int addVertexData(glm::vec3 v, glm::vec3 n, glm::vec2 t); 
 
 private: 
 
@@ -50,6 +52,7 @@ private:
 
 	Shader* m_shader; 
 	Material m_material;
+	Texture* m_texture;
 	VertexBufferObject* m_vbo; 
 	
 };

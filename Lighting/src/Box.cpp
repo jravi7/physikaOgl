@@ -35,11 +35,16 @@ void Box::setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess)
 	m_material.shininess = shininess;
 }
 
-unsigned int Box::addVertexData(glm::vec3 p, glm::vec3 n)
+void Box::setTexture(Texture* texture)
+{
+	m_texture = texture;
+}
+
+unsigned int Box::addVertexData(glm::vec3 p, glm::vec3 n, glm::vec2 t)
 {
 	Vertex v; 
 	v.p = p;
-	v.t = glm::vec2((p.x+m_side*0.5f)/m_side, (p.y+m_side*0.5f)/m_side);
+	v.t = t;
 	v.n = n;
 	v.c = m_color;
 
@@ -65,14 +70,19 @@ void Box::createCube()
 	glm::vec3 v7(-m_side*0.5f, -m_side*0.5f, -m_side*0.5f); 
 	glm::vec3 v8( m_side*0.5f, -m_side*0.5f, -m_side*0.5f);
 
-	unsigned int i1 = addVertexData(v1, glm::normalize(v1/3.f));
-	unsigned int i2 = addVertexData(v2, glm::normalize(v2/3.f));
-	unsigned int i3 = addVertexData(v3, glm::normalize(v3/3.f));
-	unsigned int i4 = addVertexData(v4, glm::normalize(v4/3.f));
-	unsigned int i5 = addVertexData(v5, glm::normalize(v5/3.f));
-	unsigned int i6 = addVertexData(v6, glm::normalize(v6/3.f));
-	unsigned int i7 = addVertexData(v7, glm::normalize(v7/3.f));
-	unsigned int i8 = addVertexData(v8, glm::normalize(v8/3.f));
+	glm::vec2 t1(0, 0);
+	glm::vec2 t2(1, 0);
+	glm::vec2 t3(1, 1);
+	glm::vec2 t4(0, 1);
+
+	unsigned int i1 = addVertexData(v1, glm::normalize(v1/3.f),t1);
+	unsigned int i2 = addVertexData(v2, glm::normalize(v2/3.f),t2);
+	unsigned int i3 = addVertexData(v3, glm::normalize(v3/3.f),t3);
+	unsigned int i4 = addVertexData(v4, glm::normalize(v4/3.f),t4);
+	unsigned int i5 = addVertexData(v5, glm::normalize(v5/3.f),t1);
+	unsigned int i6 = addVertexData(v6, glm::normalize(v6/3.f),t2);
+	unsigned int i7 = addVertexData(v7, glm::normalize(v7/3.f),t3);
+	unsigned int i8 = addVertexData(v8, glm::normalize(v8/3.f),t4);
 
 	//front
 	addFace(i1, i2, i3);
@@ -134,7 +144,10 @@ void Box::render(Camera* cam, std::vector<Light>& lights)
 		m_shader->setUniform("g_material.kd", m_material.kd);
 		m_shader->setUniform("g_material.ks", m_material.ks);
 		m_shader->setUniform("g_material.shininess", m_material.shininess);
-		
+
+		m_texture->activate(GL_TEXTURE0);
+		m_shader->setSampler("TextureSample2D", 0);
+
 		for(unsigned int i = 0 ; i < lights.size(); i++)
 		{
 			std::string uniform_name = "g_light["+std::to_string(i)+"].";
@@ -147,6 +160,7 @@ void Box::render(Camera* cam, std::vector<Light>& lights)
 		
 		//render mesh
 		m_vbo->render(GL_TRIANGLES);
+		m_texture->deactivate();
 		m_shader->disuse();
 	}
 }

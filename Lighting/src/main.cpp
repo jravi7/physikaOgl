@@ -32,9 +32,13 @@ float g_dt = 0.1; //global simulation timestep
 
 Camera* g_cam2; 
 Shader* g_shader;
+Shader* g_plane_shader;
 DPlane* g_plane;
 Box*	g_box; 
 std::vector<Light> g_lights; 
+
+Texture* g_wood_texture;
+Texture* g_wood_specular;
 
 //Keyboard variables
 bool keyStates[256];
@@ -61,6 +65,7 @@ void initCamera(){
 void initShaders()
 {
 	g_shader = new Shader("shaders/vs.glsl", "shaders/pointFS.glsl");
+	g_plane_shader = new Shader("shaders/vs.glsl", "shaders/PhongFS.glsl");
 }
 
 void initSettings()
@@ -75,21 +80,37 @@ void initObjects()
 	g_box = new Box(3, glm::vec3(0, 5, 0), glm::vec3(0.2));
 	g_box->setShader(g_shader);
 	g_box->setMaterial(glm::vec3(0.2), glm::vec3(1), glm::vec3(1.f), 60.f);
+	g_box->setTexture(g_wood_texture);
 	g_plane = new DPlane(glm::vec3(-128*2*0.5, 0, 128*2*0.5), glm::vec3(0.3,0.8,0.4), 128, 2);
-	g_plane->setShader(g_shader);
-	g_plane->setMaterial(glm::vec3(0.3), glm::vec3(1), glm::vec3(0.1), 60.f);
+	g_plane->setShader(g_plane_shader);
+	g_plane->setMaterial(glm::vec3(1.f), glm::vec3(1), glm::vec3(.4), 60.f);
+	g_plane->setTexture(g_wood_specular);
 }
 
 void initLights()	
 {
-
 	for(unsigned int i = 0; i < NO_OF_LIGHTS; i++)
 	{
-		Light l(randVec(-50.f, 50.f));
-		l.setProperty(glm::vec3(0.2f), randVec(0.1,1), glm::vec3(0.4f));
+		Light l(randVec(45, 50));
+		l.setProperty(glm::vec3(0.5f), glm::vec3(.1f), glm::vec3(0.5f));
 		g_lights.push_back(l);
 	}
+}
 
+void initTextures()
+{
+	g_wood_texture = new Texture(GL_TEXTURE_2D);
+	g_wood_texture->setWrap(GL_REPEAT);
+	g_wood_texture->setMinFilter(GL_LINEAR);
+	g_wood_texture->setMagFilter(GL_LINEAR);
+	g_wood_texture->setImagePath("../resources/Textures/container2.png");
+	g_wood_specular = new Texture(GL_TEXTURE_2D);
+	g_wood_specular->setWrap(GL_REPEAT);
+	g_wood_specular->setMinFilter(GL_LINEAR);
+	g_wood_specular->setMagFilter(GL_LINEAR);
+	g_wood_specular->setImagePath("../resources/Textures/wood.png");
+	g_wood_texture->init();
+	g_wood_specular->init();
 }
 
 
@@ -99,6 +120,7 @@ void initScene()
 	initSettings();
 	initCamera();
 	initShaders();
+	initTextures();
 	initObjects();
 	initLights();
 }
