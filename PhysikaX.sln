@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Instancing", "Instancing\In
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lighting", "Lighting\Lighting.vcxproj", "{370CDC23-4D7C-47F8-8E0F-28E55EC5A621}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Curves", "Curves\Curves.vcxproj", "{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -51,6 +53,17 @@ Global
 		{370CDC23-4D7C-47F8-8E0F-28E55EC5A621}.Release|Win32.ActiveCfg = Release|Win32
 		{370CDC23-4D7C-47F8-8E0F-28E55EC5A621}.Release|Win32.Build.0 = Release|Win32
 		{370CDC23-4D7C-47F8-8E0F-28E55EC5A621}.Release|x64.ActiveCfg = Release|Win32
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Debug|Win32.Build.0 = Debug|Win32
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Debug|x64.ActiveCfg = Debug|x64
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Debug|x64.Build.0 = Debug|x64
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Release|Win32.ActiveCfg = Release|Win32
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Release|Win32.Build.0 = Release|Win32
+		{E6C8A902-A05A-40C7-B56F-FAEE86F5D536}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
