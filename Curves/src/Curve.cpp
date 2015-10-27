@@ -24,11 +24,12 @@ void Curve::setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess)
 
 void Curve::init()
 {
-	for(int i = 0 ; i < m_count ; ++i)
+	float inc = 500.f/float(m_count);
+	for(float i = 0 ; i <= 500; i+=inc)
 	{
-		float x = 10.f * cosf(i);
-		float y = 2*i; 
-		float z = 10.f * sinf(i);
+		float x = cosf(i);
+		float y = 0.2*i; 
+		float z = sinf(i);
 		glm::vec3 p = glm::vec3(x,y,z);
 		glm::vec2 t = glm::vec2(0);
 		glm::vec3 n = glm::vec3(0);
@@ -55,7 +56,7 @@ void Curve::render(Camera* cam, std::vector<Light>& lights)
 {
 	if(m_shader!=nullptr)
 	{
-
+		glPointSize(10.f);
 		glm::mat4 model = glm::translate(glm::mat4(1), m_position);
 		model = glm::scale(model, glm::vec3(10, 10, 10));
 		m_shader->use();
@@ -92,5 +93,6 @@ void Curve::render(Camera* cam, std::vector<Light>& lights)
 		//render mesh
 		m_vbo->render(GL_POINTS);
 		m_shader->disuse();
+		glPointSize(1.f);
 	}
 }

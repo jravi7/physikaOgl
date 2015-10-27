@@ -89,10 +89,10 @@ void main()
 	vec4 TexColor = texture(TextureSample2D, fVertexTexture);
 	for(int i = 0; i < LIGHT_COUNT; i++)
 	{
-		resultDA += phongDA(g_light[i], tnorm);
-		resultS  += phongS(g_light[i], tnorm);
+	//	resultDA += phongDA(g_light[i], tnorm);
+	//	resultS  += phongS(g_light[i], tnorm);
 	}
 	//outputColor = (resultDA*point_color) + resultS;
 	
-	outputColor = fVertexColor;
+	outputColor = vec4(fVertexColor,1.f);
 }

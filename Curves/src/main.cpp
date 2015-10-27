@@ -81,7 +81,7 @@ void initShaders()
 {
 	g_shader = new Shader("shaders/vs.glsl", "shaders/PhongFS.glsl");
 	g_point_shader = new Shader("shaders/vs.glsl", "shaders/pointFS.glsl");
-	g_point_shader = new Shader("shaders/vs.glsl", "shaders/pointFS.glsl");
+	g_curve_shader = new Shader("shaders/curveVS.glsl", "shaders/curveFS.glsl");
 	
 }
 
@@ -106,6 +106,12 @@ void initObjects()
 	//mesh
 	g_mesh = new PObject(glm::vec3(0, 10, 0), "../resources/Meshes/trunk.ply");
 	g_mesh->setShader(g_point_shader);
+	g_mesh->setMaterial(glm::vec3(0.7), glm::vec3(1), glm::vec3(1.f), 60.f);
+
+	//curve
+	g_curve = new Curve(1000);
+	g_curve->init();
+	g_curve->setShader(g_curve_shader);
 	g_mesh->setMaterial(glm::vec3(0.7), glm::vec3(1), glm::vec3(1.f), 60.f);
 }
 
@@ -163,6 +169,7 @@ void display()
 		l.render(g_cam2);
 	}
 	
+	g_curve->render(g_cam2, g_lights);
 	
 	glutPostRedisplay();
 	glutSwapBuffers();
