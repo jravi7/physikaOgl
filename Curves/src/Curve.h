@@ -1,5 +1,7 @@
 #pragma once
 
+
+#define M_PI 3.14159265358979323846
 //3rd Party
 #include <GL\glew.h>
 #include <glm\glm.hpp>
@@ -22,6 +24,7 @@ public:
 	void init();
 	void render(Camera* cam, std::vector<Light>& lights); 
 	void setShader(Shader* shader);
+	void setShader(Shader* shader, Shader* shader2);
 	void setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess);
 
 private:
@@ -30,6 +33,7 @@ private:
 	std::vector<Vertex> m_points;
 	std::vector<unsigned int> m_indices;
 	Shader* m_shader; 
+	Shader* m_shader2; 
 	Material m_material;
 	glm::vec3 m_position; 
 	VertexBufferObject* m_vbo;

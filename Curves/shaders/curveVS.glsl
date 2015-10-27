@@ -25,5 +25,5 @@ void main()
     fVertexTexture  = VertexTexture;
 
 
-	gl_Position =	mvp * vec4(VertexPosition, 1.0f);
+	gl_Position =	mvp*vec4(VertexPosition, 1.0f);
 }

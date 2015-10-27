@@ -173,6 +173,7 @@
     <None Include="shaders\curveFS.glsl" />
     <None Include="shaders\curveVS.glsl" />
     <None Include="shaders\fs.glsl" />
+    <None Include="shaders\gs.glsl" />
     <None Include="shaders\LightFS.glsl" />
     <None Include="shaders\LightVS.glsl" />
     <None Include="shaders\PhongFS.glsl" />

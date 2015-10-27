@@ -124,5 +124,8 @@
     <None Include="shaders\curveVS.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="shaders\gs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,5 +1,8 @@
 #pragma once
-
+#define VERTEX_POSITION		0
+#define VERTEX_NORMAL		1
+#define VERTEX_TEXTURE		2
+#define VERTEX_COLOR		3
 
 #include <gl/glew.h>
 #include <vector>
@@ -8,12 +11,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Vertex.h"
-
 class Shader
 {
 public:
-	Shader(const char* vsource, const char* fsource);
+	Shader(const char* vsource, const char* fsource, const char* gsource=NULL);
 	~Shader(void);
 	void use();   //use shader program
 	void disuse();	//disable shader program
@@ -29,12 +30,14 @@ private:
 	GLuint createShader(GLenum shaderType, const char* fileData);
 	void addVertexShader(const char* vfile);
 	void addFragmentShader(const char* ffile);
+	void addGeometryShader(const char* gfile);
 	GLint getUniformLocation(const GLchar *varname);
 	void compileProgram();
 	void bindAttributeLocations();
 	GLuint m_Program;
 	GLuint m_vs;
 	GLuint m_fs;
+	GLuint m_gs;
 
 };
 

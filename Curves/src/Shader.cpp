@@ -1,12 +1,16 @@
 #include "Shader.h"
 
 
-Shader::Shader(const char* vsource, const char* fsource)
+Shader::Shader(const char* vsource, const char* fsource, const char* gsource)
 {
 	m_Program = glCreateProgram();
-	
+
 	addVertexShader(vsource);
 	addFragmentShader(fsource);
+	if(gsource!=NULL)
+	{
+		addGeometryShader(gsource);
+	}
 	bindAttributeLocations();
 	compileProgram();
 }
@@ -49,7 +53,6 @@ void Shader::setUniform(const GLchar* name, float v)
 		glUniform1f(loc, v);
 	}
 }
-
 
 void Shader::setUniform(const GLchar* name, glm::vec3 v)
 {
@@ -118,6 +121,19 @@ void Shader::addFragmentShader(const char *ffile)
 	}
 }
 
+void Shader::addGeometryShader(const char *gfile)
+{
+	std::string gstr(gfile);
+	if(gstr.size() != 0){
+		m_gs = createShader(GL_GEOMETRY_SHADER,file_read(gfile));
+		glAttachShader(m_Program, m_gs);
+		std::cout<<"Geometry Shader \""<<gstr<<"\" Added"<<std::endl;
+	}
+	else{
+		std::cerr<<"No Geometry Shader Detected";
+	}
+}
+
 
 void Shader::compileProgram()
 {
@@ -135,7 +151,7 @@ void Shader::compileProgram()
 		fprintf(stderr, "Linker failure: %s\n", strInfoLog);
 		delete[] strInfoLog;
 	}
-		
+
 }
 
 

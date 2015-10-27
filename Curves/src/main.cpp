@@ -39,6 +39,7 @@ Camera* g_cam2;
 Shader* g_shader;
 Shader* g_point_shader;
 Shader* g_curve_shader;
+Shader* g_geom_shader;
 
 //Textures
 Texture* g_wood_texture;
@@ -82,6 +83,7 @@ void initShaders()
 	g_shader = new Shader("shaders/vs.glsl", "shaders/PhongFS.glsl");
 	g_point_shader = new Shader("shaders/vs.glsl", "shaders/pointFS.glsl");
 	g_curve_shader = new Shader("shaders/curveVS.glsl", "shaders/curveFS.glsl");
+	g_geom_shader= new Shader("shaders/curveVS.glsl", "shaders/curveFS.glsl", "shaders/gs.glsl");
 	
 }
 
@@ -109,9 +111,10 @@ void initObjects()
 	g_mesh->setMaterial(glm::vec3(0.7), glm::vec3(1), glm::vec3(1.f), 60.f);
 
 	//curve
-	g_curve = new Curve(1000);
+	g_curve = new Curve(500);
 	g_curve->init();
-	g_curve->setShader(g_curve_shader);
+	//g_curve->setShader(g_curve_shader);
+	g_curve->setShader(g_curve_shader,g_geom_shader);
 	g_mesh->setMaterial(glm::vec3(0.7), glm::vec3(1), glm::vec3(1.f), 60.f);
 }
 
