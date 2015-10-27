@@ -25,6 +25,7 @@ Project: Genesis - A Simple Cube
 #include "DPlane.h"
 #include "Light.h"
 #include "PObject.h"
+#include "Curve.h"
 
 //Scalars
 int g_width = 1024;
@@ -37,6 +38,7 @@ Camera* g_cam2;
 //Shaders
 Shader* g_shader;
 Shader* g_point_shader;
+Shader* g_curve_shader;
 
 //Textures
 Texture* g_wood_texture;
@@ -45,6 +47,7 @@ Texture* g_wood_specular;
 //Primitives
 DPlane* g_plane;
 Box*	g_box; 
+Curve*  g_curve;
 
 //Mesh Object
 PObject* g_mesh;
@@ -77,6 +80,7 @@ void initCamera(){
 void initShaders()
 {
 	g_shader = new Shader("shaders/vs.glsl", "shaders/PhongFS.glsl");
+	g_point_shader = new Shader("shaders/vs.glsl", "shaders/pointFS.glsl");
 	g_point_shader = new Shader("shaders/vs.glsl", "shaders/pointFS.glsl");
 	
 }

@@ -12,9 +12,6 @@
 //3rd Party
 #include <glm\glm.hpp>
 
-//physika
-#include "Texture.h"
-
 struct Vertex
 {
 	glm::vec3 p; 
@@ -38,7 +35,5 @@ struct Material
 	glm::vec3 ka; 
 	glm::vec3 kd; 
 	glm::vec3 ks;
-	Texture*  kdTex; 
-	Texture*  ksTex;
 	float shininess;
 };

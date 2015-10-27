@@ -54,6 +54,9 @@
     <ClCompile Include="src\VertexBufferObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Curve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ACamera.h">
@@ -92,6 +95,9 @@
     <ClInclude Include="src\VertexBufferObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Curve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fs.glsl">
@@ -110,6 +116,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\vs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\curveFS.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\curveVS.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
