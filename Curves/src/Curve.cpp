@@ -7,7 +7,7 @@ Curve::Curve(int points)
 	m_shader = nullptr;
 	m_shader2 = nullptr;
 	m_vbo = new VertexBufferObject();
-
+	m_vbo2 = new VertexBufferObject();
 }
 
 
@@ -34,6 +34,9 @@ void Curve::setMaterial(glm::vec3 a, glm::vec3 d, glm::vec3 s, float shininess)
 
 void Curve::init()
 {
+	int circle_count = 50;
+	std::vector<glm::vec3> curve_points; 
+	std::vector<glm::vec3> circle_points;
 	float dt =  5 * M_PI / m_count;
 	float t = 0; 
 	for(int i = 0 ; i <= m_count; ++i)
@@ -46,21 +49,90 @@ void Curve::init()
 		glm::vec2 t = glm::vec2(0);
 		glm::vec3 n = glm::vec3(0);
 		glm::vec3 c = glm::vec3(0.8f, 0.4f, 0.3f);
-
+		
 		Vertex d; 
 		d.p = p;
 		d.t = t;
 		d.c = c;
 		d.n = n;
-
+		
+		curve_points.push_back(p);
 		m_points.push_back(d);
 		m_indices.push_back(i);
-		
 	}
-
 	m_vbo->setIndices(m_indices);
 	m_vbo->setVertexData(m_points);
 	m_vbo->createBuffers();
+
+	dt = 2*M_PI / circle_count ;
+	for(int i = 1 ; i < curve_points.size()-1 ; i++)
+	{
+		glm::mat4 R(1.f);
+		glm::mat4 T(1.f);
+
+		glm::vec3 pointback = curve_points[i-1];
+		glm::vec3 pointmid = curve_points[i];
+		glm::vec3 pointforward = curve_points[i+1];
+
+		glm::vec3 forward_tangent_vector =  glm::vec3(glm::normalize(pointforward - pointmid)) ;
+		glm::vec3 backward_tangent_vector = glm::vec3(glm::normalize(pointmid - pointback)) ;
+
+		glm::vec3 second_order_tangent = glm::normalize(forward_tangent_vector - backward_tangent_vector);
+
+		glm::vec3 binormal = glm::normalize(glm::cross(forward_tangent_vector, second_order_tangent));
+
+		glm::vec3 normal = glm::normalize(glm::cross(binormal, forward_tangent_vector));
+
+		glm::mat3 tbn = glm::mat3(forward_tangent_vector,binormal,normal);
+
+		glm::vec3 normal_axis = glm::vec3(0, 1, 0);
+		//normal_axis = forward_tangent_vector;
+
+		glm::vec3 circleNormal = glm::normalize(tbn * normal_axis);
+		glm::vec3 rotationAxis = glm::cross(normal_axis, circleNormal);
+		float rotationAngle = glm::acos(glm::dot(normal_axis, circleNormal));
+
+		R = glm::rotate(R, glm::degrees(rotationAngle), rotationAxis);
+
+		T = glm::translate(T, pointmid);
+
+		glm::mat4 M = T*R;
+		
+
+		
+		for(int i = 0 ; i < circle_count ; i++)
+		{
+			float x = 0.1f*cos(dt * i);
+			float z = 0.f;
+			float y = 0.1f*sin(dt * i);;
+
+			glm::vec4 p = M * glm::vec4(x, y, z, 1);
+			circle_points.push_back(glm::vec3(p));
+		}
+
+	}
+
+	for(int i = 0 ; i < circle_points.size(); i++)
+	{
+		glm::vec3 p = circle_points[i];
+		glm::vec2 t = glm::vec2(0);
+		glm::vec3 n = glm::vec3(0);
+		glm::vec3 c = glm::vec3(0.8f, 0.4f, 0.3f);
+		
+		Vertex d; 
+		d.p = p;
+		d.t = t;
+		d.c = c;
+		d.n = n;
+		
+		m_circle_points.push_back(d);
+		m_indices2.push_back(i);
+	}
+
+
+	m_vbo2->setIndices(m_indices2);
+	m_vbo2->setVertexData(m_circle_points);
+	m_vbo2->createBuffers();
 	
 }
 
@@ -68,7 +140,7 @@ void Curve::render(Camera* cam, std::vector<Light>& lights)
 {
 	if(m_shader!=nullptr)
 	{
-		glPointSize(10.f);
+		
 		glm::mat4 model = glm::translate(glm::mat4(1), m_position);
 		model = glm::scale(model, glm::vec3(10, 10, 10));
 		m_shader->use();
@@ -103,9 +175,8 @@ void Curve::render(Camera* cam, std::vector<Light>& lights)
 		}
 
 		//render mesh
-		m_vbo->render(GL_POINTS);
+		m_vbo2->render();
 		m_shader->disuse();
-		glPointSize(1.f);
 	}
 
 	if(m_shader2!=nullptr)

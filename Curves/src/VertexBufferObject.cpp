@@ -62,3 +62,26 @@ void VertexBufferObject::render(GLenum primitive)
 	glDisableVertexAttribArray(VERTEX_TEXTURE);
 	glDisableVertexAttribArray(VERTEX_COLOR);
 }
+
+void VertexBufferObject::render()
+{
+	glEnableVertexAttribArray(VERTEX_POSITION);
+	glEnableVertexAttribArray(VERTEX_NORMAL);
+	glEnableVertexAttribArray(VERTEX_TEXTURE);
+	glEnableVertexAttribArray(VERTEX_COLOR);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+
+	glVertexAttribPointer(VERTEX_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(VERTEX_TEXTURE, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)12);
+	glVertexAttribPointer(VERTEX_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)20);
+	glVertexAttribPointer(VERTEX_COLOR, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)32);
+
+
+	glDrawArrays(GL_TRIANGLE_STRIP,0,m_data.size());
+
+	glDisableVertexAttribArray(VERTEX_POSITION);
+	glDisableVertexAttribArray(VERTEX_NORMAL);
+	glDisableVertexAttribArray(VERTEX_TEXTURE);
+	glDisableVertexAttribArray(VERTEX_COLOR);
+}

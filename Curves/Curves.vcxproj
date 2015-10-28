@@ -172,6 +172,7 @@
   <ItemGroup>
     <None Include="shaders\curveFS.glsl" />
     <None Include="shaders\curveVS.glsl" />
+    <None Include="shaders\curveVS2.glsl" />
     <None Include="shaders\fs.glsl" />
     <None Include="shaders\gs.glsl" />
     <None Include="shaders\LightFS.glsl" />

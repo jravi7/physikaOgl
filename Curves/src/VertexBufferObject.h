@@ -21,6 +21,7 @@ public:
 	~VertexBufferObject(void);
 
 	void render(GLenum primitive);
+	void render();
 	void createBuffers();
 	void setVertexData(std::vector<Vertex> data);
 	void setIndices(std::vector<unsigned int> indices);

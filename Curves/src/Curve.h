@@ -31,11 +31,14 @@ private:
 	
 	int m_count;
 	std::vector<Vertex> m_points;
+	std::vector<Vertex> m_circle_points;
 	std::vector<unsigned int> m_indices;
+	std::vector<unsigned int> m_indices2;
 	Shader* m_shader; 
 	Shader* m_shader2; 
 	Material m_material;
 	glm::vec3 m_position; 
 	VertexBufferObject* m_vbo;
+	VertexBufferObject* m_vbo2;
 };
 

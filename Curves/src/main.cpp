@@ -82,7 +82,7 @@ void initShaders()
 {
 	g_shader = new Shader("shaders/vs.glsl", "shaders/PhongFS.glsl");
 	g_point_shader = new Shader("shaders/vs.glsl", "shaders/pointFS.glsl");
-	g_curve_shader = new Shader("shaders/curveVS.glsl", "shaders/curveFS.glsl");
+	g_curve_shader = new Shader("shaders/curveVS2.glsl", "shaders/curveFS.glsl");
 	g_geom_shader= new Shader("shaders/curveVS.glsl", "shaders/curveFS.glsl", "shaders/gs.glsl");
 	
 }
